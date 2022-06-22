@@ -24,6 +24,7 @@ package com.example.imagetovolley;
         import android.widget.Toast;
 
         import com.android.volley.AuthFailureError;
+        import com.android.volley.DefaultRetryPolicy;
         import com.android.volley.Request;
         import com.android.volley.RequestQueue;
         import com.android.volley.Response;
@@ -46,6 +47,8 @@ package com.example.imagetovolley;
 
 public class welcome extends Activity
 {
+    MediaPlayer mediaplayer;
+
 
     EditText t1,t2;
     CircleImageView img;
@@ -53,18 +56,19 @@ public class welcome extends Activity
     Button btnupload;
     Bitmap bitmap;
     String encodedimage;
-    private static final String apiurl="http://192.168.8.175:5000/predict";
+    private static final String apiurl="http://172.16.45.111:5000/predict";
     @Override
 
     protected void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
        Bundle extra = getIntent().getExtras();
       final String value = extra.getString("key");
-        MediaPlayer mediaplayer;
+
         String tag ="Encoding";
 
         Log.d(tag, value);
@@ -75,6 +79,8 @@ public class welcome extends Activity
         btnupload=(Button)findViewById(R.id.sbmit_upload);
 
         Button stop=(Button)findViewById(R.id.button4);
+
+         Button pause = findViewById(R.id.button6);
 
 
         btncamera.setOnClickListener(new View.OnClickListener() {
@@ -114,11 +120,13 @@ public class welcome extends Activity
 
 
 
+
     public void playSong(String response) {
+
+
         String tag ="Encoding";
         String message = "--------------------Start  PLayinfg-------";
         Log.d(tag, message);
-        MediaPlayer mediaplayer;
         String tag9 ="MyVolley";
 
        String happy = "happy";
@@ -130,6 +138,8 @@ public class welcome extends Activity
         String b = "english";
         Log.d(tag, a);
         if(a.equals(value) && response.equals("happy") || a.equals(value) && response.equals("normal")){
+
+
             String tag2 ="Encoding";
             String message2 = "--------------------Tamil-------------";
             Log.d(tag2, message2);
@@ -160,7 +170,7 @@ public class welcome extends Activity
             String tag2 ="Encoding";
             String message2 = "--------------------Tamil-------------";
             Log.d(tag2, message2);
-            mediaplayer  = MediaPlayer.create(this,R.raw.shootthekuruvui);
+            mediaplayer  = MediaPlayer.create(this,R.raw.ashique);
 
             mediaplayer.start();
 
@@ -188,12 +198,6 @@ public class welcome extends Activity
     }
 
 
-    public void stop(View view) {
-        MediaPlayer mediaplayer;
-        mediaplayer  = MediaPlayer.create(this,R.raw.jolly);
-        mediaplayer.stop();
-
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode==111 && resultCode==RESULT_OK)
@@ -254,6 +258,10 @@ public class welcome extends Activity
                 return map;
             }
         };
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                9000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         RequestQueue queue= Volley.newRequestQueue(getApplicationContext());
         queue.add(request);
@@ -261,5 +269,36 @@ public class welcome extends Activity
 
     }
 
+    public void stopped() {
 
+
+            String tag = "Encode";
+            String message = "--------------------Stop Playinfg-------";
+            Log.d(tag, message);
+    mediaplayer = MediaPlayer.create(this, R.raw.senorita);
+            mediaplayer.release();
+            mediaplayer = null;
+
+    }
+
+    public void stop(View view){
+        stopped();
+
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopped();
+    }
+
+
+    public void pause(View view) {
+
+        mediaplayer.pause();
+    }
+
+    public void play(View view) {
+
+        mediaplayer.start();
+    }
 }
